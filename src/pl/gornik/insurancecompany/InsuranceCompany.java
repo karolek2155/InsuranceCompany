@@ -1,6 +1,6 @@
-package pl.gornik;
+package pl.gornik.insurancecompany;
 
-import pl.gornik.policies.Policy;
+import pl.gornik.insurancecompany.policies.Policy;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package pl.gornik;
+package pl.gornik.insurancecompany.enums;
 
 public enum PaymentMethod {
     CASH,

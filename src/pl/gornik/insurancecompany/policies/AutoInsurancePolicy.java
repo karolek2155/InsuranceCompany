@@ -1,6 +1,7 @@
-package pl.gornik.policies;
+package pl.gornik.insurancecompany.policies;
 
-import pl.gornik.Client;
+import pl.gornik.insurancecompany.Client;
+import pl.gornik.insurancecompany.enums.AutoInsuranceType;
 
 import java.time.LocalDate;
 

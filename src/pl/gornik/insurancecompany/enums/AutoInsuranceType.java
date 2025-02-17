@@ -1,4 +1,4 @@
-package pl.gornik.policies;
+package pl.gornik.insurancecompany.enums;
 
 public enum AutoInsuranceType {
     LIABILITY,
