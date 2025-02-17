@@ -1,7 +1,17 @@
 package pl.gornik.insurancecompany.enums;
 
 public enum InsuranceType {
-    AUTO,
-    PROPERTY,
-    LIFE;
+    AUTO("komunikacyjna"),
+    PROPERTY("majątkowa"),
+    LIFE("na życie");
+
+    private final String displayName;
+
+    InsuranceType(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }
