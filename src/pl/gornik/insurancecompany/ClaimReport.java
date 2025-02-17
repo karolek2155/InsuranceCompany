@@ -14,4 +14,14 @@ public class ClaimReport {
         this.reportDate = reportDate;
         this.policyNumber = policyNumber;
     }
+
+    @Override
+    public String toString() {
+        return "ClaimReport{" +
+                "client=" + client +
+                ", description='" + description + '\'' +
+                ", reportDate=" + reportDate +
+                ", policyNumber='" + policyNumber + '\'' +
+                '}';
+    }
 }

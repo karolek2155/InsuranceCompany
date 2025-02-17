@@ -10,4 +10,13 @@ public class Client {
         this.lastName = lastName;
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }

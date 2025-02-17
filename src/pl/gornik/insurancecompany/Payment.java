@@ -10,4 +10,12 @@ public class Payment {
         this.amount = amount;
         this.paymentMethod = paymentMethod;
     }
+
+    @Override
+    public String toString() {
+        return "Payment{" +
+                "amount=" + amount +
+                ", paymentMethod=" + paymentMethod +
+                '}';
+    }
 }
