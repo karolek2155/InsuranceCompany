@@ -65,7 +65,8 @@ public class Main {
 
         System.out.println("\nSkładki dla polis:");
         for (Policy policy : policies) {
-            System.out.printf("Polisa (%s) o numerze %s: %.2f\n", policy.getInsuranceType(), policy.getPolicyNumber(),  policy.calculatePremium());
+            policy.updatePremium();
+            System.out.printf("Polisa (%s) o numerze %s: %.2f\n", policy.getInsuranceType(), policy.getPolicyNumber(), policy.getPremium());
         }
 
         System.out.println("\nRaporty roszczeń:");

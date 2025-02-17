@@ -15,8 +15,8 @@ public class LifeInsurancePolicy extends Policy{
     }
 
     @Override
-    public double calculatePremium() {
-        return premium + insuredAmount * 0.02;
+    public void updatePremium() {
+        premium = premium + insuredAmount * 0.02;
     }
 
     @Override

@@ -16,12 +16,12 @@ public class AutoInsurancePolicy extends Policy{
     }
 
     @Override
-    public double calculatePremium() {
-        if (type == AutoInsuranceType.COMPREHENSIVE) {
-            return premium * 1.2;
-        } else {
-            return premium;
-        }
+    public void updatePremium() {
+        premium = switch (type) {
+            case COMPREHENSIVE -> premium * 1.2;
+            case COLLISION -> premium * 1.1;
+            default -> premium;
+        };
     }
 
     @Override

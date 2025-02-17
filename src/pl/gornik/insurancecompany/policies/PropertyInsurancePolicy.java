@@ -16,12 +16,12 @@ public class PropertyInsurancePolicy extends Policy{
     }
 
     @Override
-    public double calculatePremium() {
-        if (type == PropertyInsuranceType.HOME) {
-            return premium * 1.1;
-        } else {
-            return premium;
-        }
+    public void updatePremium() {
+        premium = switch (type) {
+            case HOME -> premium * 1.1;
+            case APARTMENT -> premium * 1.05;
+            default -> premium;
+        };
     }
 
     @Override

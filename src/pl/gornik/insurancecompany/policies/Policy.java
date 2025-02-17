@@ -27,5 +27,9 @@ public abstract class Policy {
         return policyNumber;
     }
 
-    public abstract double calculatePremium();
+    public double getPremium() {
+        return premium;
+    }
+
+    public abstract void updatePremium();
 }
