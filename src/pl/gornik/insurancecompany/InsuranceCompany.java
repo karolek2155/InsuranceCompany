@@ -16,4 +16,12 @@ public class InsuranceCompany {
     public void addClient(Client client) {
         clients.add(client);
     }
+
+    public List<Policy> getPolicies() {
+        return policies;
+    }
+
+    public List<Client> getClients() {
+        return clients;
+    }
 }
