@@ -35,7 +35,7 @@ public class Main {
             System.out.println("9 - Wyświetlić składkę polisy");
             System.out.println("0 - Wyjście");
 
-            int choice = scanner.nextInt();
+            int choice = getValidChoice(scanner);
             scanner.nextLine();
 
             switch (choice) {
@@ -85,6 +85,23 @@ public class Main {
             }
 
         }
+    }
+
+    public static int getValidChoice(Scanner scanner) {
+        int choice = -1;
+        while (choice < 0 || choice > 9) {
+            System.out.print("Wybierz numer opcji (0-9): ");
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+                if (choice < 0 || choice > 9) {
+                    System.out.println("Nieprawidłowa opcja. Wybierz numer od 0 do 9.");
+                }
+            } else {
+                System.out.println("Proszę podać liczbę.");
+                scanner.next();
+            }
+        }
+        return choice;
     }
 
     public static void initializeData() {
