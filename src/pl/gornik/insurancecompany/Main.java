@@ -35,7 +35,7 @@ public class Main {
             System.out.println("9 - Wyświetlić składkę polisy");
             System.out.println("0 - Wyjście");
 
-            int choice = getValidChoice(scanner, 0, 9);
+            int choice = Validation.getValidChoice(scanner, 0, 9);
             scanner.nextLine();
 
             switch (choice) {
@@ -46,15 +46,14 @@ public class Main {
                     System.out.println("3 - Wyszukać po numerze telefonu");
                     System.out.println("4 - Wyszukać po adresie e-mail");
                     System.out.println("5 - Wyświetlić wszystkich klientów");
-                    int caseChoice = getValidChoice(scanner, 1, 5);
+                    int caseChoice = Validation.getValidChoice(scanner, 1, 5);
                     scanner.nextLine();
+                    System.out.println();
 
                     switch (caseChoice) {
                         case 1 -> {
-                            System.out.print("\nPodaj imię klienta: ");
-                            String firstName = scanner.nextLine();
-                            System.out.print("Podaj nazwisko klienta: ");
-                            String lastName = scanner.nextLine();
+                            String firstName = Validation.getValidNotEmptyString(scanner, "Podaj imię klienta: ");
+                            String lastName = Validation.getValidNotEmptyString(scanner, "Podaj nazwisko klienta: ");
                             List<Client> foundClients = insuranceCompany.findClientsByFullName(firstName, lastName);
 
                             if (foundClients.isEmpty()) {
@@ -70,8 +69,7 @@ public class Main {
                             }
                         }
                         case 2 -> {
-                            System.out.print("\nPodaj numer PESEL klienta: ");
-                            String pesel = scanner.nextLine();
+                            String pesel = Validation.getValidPesel(scanner);
                             Client foundClient = insuranceCompany.findClientByPesel(pesel);
 
                             if (foundClient == null) {
@@ -82,8 +80,7 @@ public class Main {
                             }
                         }
                         case 3 -> {
-                            System.out.print("\nPodaj numer telefonu klienta: ");
-                            String phone = scanner.nextLine();
+                            String phone = Validation.getValidPhone(scanner);
                             Client foundClient = insuranceCompany.findClientByPhoneNumber(phone);
 
                             if (foundClient == null) {
@@ -94,8 +91,7 @@ public class Main {
                             }
                         }
                         case 4 -> {
-                            System.out.print("\nPodaj adres e-mail klienta: ");
-                            String email = scanner.nextLine();
+                            String email = Validation.getValidEmail(scanner);
                             Client foundClient = insuranceCompany.findClientByEmail(email);
 
                             if (foundClient == null) {
@@ -115,10 +111,19 @@ public class Main {
                     }
 
                 }
-
-
                 case 2 -> {
                     System.out.println("Dodawanie nowego klienta...");
+
+                    String firstName = Validation.getValidNotEmptyString(scanner, "Podaj imię klienta: ");
+                    String lastName = Validation.getValidNotEmptyString(scanner, "Podaj nazwisko klienta: ");
+                    String pesel = Validation.getValidPesel(scanner);
+                    String phone = Validation.getValidPhone(scanner);
+                    String email = Validation.getValidEmail(scanner);
+                    String address = Validation.getValidNotEmptyString(scanner, "Podaj adres zamieszkania klienta: ");
+
+                    insuranceCompany.addClient(new Client(firstName, lastName, address, pesel, phone, email));
+                    System.out.println("Nowy klient został pomyślnie dodany:");
+                    insuranceCompany.getClients().getLast().presentClient();
                 }
                 case 3 -> {
                     System.out.println("Usuwanie klienta...");
@@ -164,24 +169,6 @@ public class Main {
             }
 
         }
-    }
-
-    public static int getValidChoice(Scanner scanner, int min, int max) {
-        if(min > max) max = min;
-        int choice = -1;
-        while (choice < min || choice > max) {
-            System.out.printf("Wybierz numer opcji (%d-%d): ", min, max);
-            if (scanner.hasNextInt()) {
-                choice = scanner.nextInt();
-                if (choice < min || choice > max) {
-                    System.out.printf("Nieprawidłowa opcja. Wybierz numer opcji (%d-%d): ", min, max);
-                }
-            } else {
-                System.out.println("Proszę podać liczbę.");
-                scanner.next();
-            }
-        }
-        return choice;
     }
 
     public static void initializeData() {
