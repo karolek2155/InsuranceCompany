@@ -4,12 +4,50 @@ import pl.gornik.insurancecompany.policies.Policy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class InsuranceCompany {
     private List<Policy> policies = new ArrayList<>();
     private List<Client> clients = new ArrayList<>();
     private List<ClaimReport> claimReports = new ArrayList<>();
     private List<Payment> payments = new ArrayList<>();
+
+    public List<Client> findClientsByFullName(String firstName, String lastName) {
+        List<Client> foundClients = new ArrayList<>();
+        for (Client client : clients) {
+            if (client.getFirstName().equalsIgnoreCase(firstName) && client.getLastName().equalsIgnoreCase(lastName)) {
+                foundClients.add(client);
+            }
+        }
+        return foundClients;
+    }
+
+    public Client findClientByPesel(String pesel) {
+        for (Client client : clients) {
+            if (client.getPesel().equals(pesel)) {
+                return client;
+            }
+        }
+        return null;
+    }
+
+    public Client findClientByPhoneNumber(String phoneNumber) {
+        for (Client client : clients) {
+            if (client.getPhoneNumber().equals(phoneNumber)) {
+                return client;
+            }
+        }
+        return null;
+    }
+
+    public Client findClientByEmail(String email) {
+        for (Client client : clients) {
+            if (client.getEmail().equalsIgnoreCase(email)) {
+                return client;
+            }
+        }
+        return null;
+    }
 
     public void addPolicy(Policy policy) {
         policies.add(policy);
