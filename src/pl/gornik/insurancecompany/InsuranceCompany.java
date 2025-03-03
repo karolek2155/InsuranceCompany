@@ -80,4 +80,9 @@ public class InsuranceCompany {
     public List<Payment> getPayments() {
         return payments;
     }
+
+    public boolean removeClient(Client client) {
+        return clients.remove(client);
+    }
+
 }

@@ -127,7 +127,31 @@ public class Main {
                 }
                 case 3 -> {
                     System.out.println("Usuwanie klienta...");
+
+                    String pesel = Validation.getValidPesel(scanner);
+                    Client clientToRemove = insuranceCompany.findClientByPesel(pesel);
+
+                    if (clientToRemove == null) {
+                        System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
+                    } else {
+                        System.out.println("Znaleziono klienta:");
+                        clientToRemove.presentClient();
+                        System.out.print("Czy na pewno chcesz usunąć tego klienta? (tak/nie): ");
+                        String confirmation = scanner.nextLine().trim().toLowerCase();
+
+                        if (confirmation.equals("tak")) {
+                            boolean removed = insuranceCompany.removeClient(clientToRemove);
+                            if (removed) {
+                                System.out.println("Klient został pomyślnie usunięty.");
+                            } else {
+                                System.out.println("Nie udało się usunąć klienta.");
+                            }
+                        } else {
+                            System.out.println("Anulowano usunięcie klienta.");
+                        }
+                    }
                 }
+
                 case 4 -> {
                     System.out.println("Składanie wniosku o ubezpieczenie...");
 
