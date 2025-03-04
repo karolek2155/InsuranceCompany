@@ -15,6 +15,14 @@ public class ClaimReport {
         this.policyNumber = policyNumber;
     }
 
+    public Client getClient() {
+        return client;
+    }
+
+    public String getPolicyNumber() {
+        return policyNumber;
+    }
+
     @Override
     public String toString() {
         return "ClaimReport{" +

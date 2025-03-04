@@ -155,15 +155,74 @@ public class Main {
                 case 4 -> {
                     System.out.println("Składanie wniosku o ubezpieczenie...");
 
-//                    insuranceCompany.addClaimReport(new ClaimReport(client, description, reportDate, policyNumber));
-                }
-                case 5 -> {
-                    System.out.println("Wyszukiwanie roszczeń...");
-                    System.out.println("\nRaporty roszczeń:");
-                    for (ClaimReport report : insuranceCompany.getClaimReports()) {
-                        System.out.println(report);
+                    String pesel = Validation.getValidPesel(scanner);
+                    Client client = insuranceCompany.findClientByPesel(pesel);
+
+                    if (client == null) {
+                        System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
+                    } else {
+                        System.out.print("Podaj opis szkody: ");
+                        String description = scanner.nextLine().trim();
+                        System.out.print("Podaj numer polisy: ");
+                        String policyNumber = scanner.nextLine().trim();
+                        LocalDate reportDate = LocalDate.now();
+
+                        ClaimReport claimReport = new ClaimReport(client, description, reportDate, policyNumber);
+                        insuranceCompany.addClaimReport(claimReport);
+
+                        System.out.println("Wniosek o ubezpieczenie został pomyślnie złożony.");
                     }
                 }
+
+                case 5 -> {
+                    System.out.println("Wyszukiwanie roszczeń...");
+
+                    System.out.println("Wybierz kryterium wyszukiwania:");
+                    System.out.println("1 - Wszystkie roszczenia");
+                    System.out.println("2 - Roszczenia według numeru PESEL klienta");
+                    System.out.println("3 - Roszczenia według numeru polisy");
+
+                    int caseChoice = Validation.getValidChoice(scanner, 1, 3);
+
+                    switch (caseChoice) {
+                        case 1 -> {
+                            System.out.println("\nRaporty roszczeń:");
+                            List<ClaimReport> allReports = insuranceCompany.getClaimReports();
+                            if (allReports.isEmpty()) {
+                                System.out.println("Brak zgłoszonych roszczeń.");
+                            } else {
+                                for (ClaimReport report : allReports) {
+                                    System.out.println(report);
+                                }
+                            }
+                        }
+                        case 2 -> {
+                            String pesel = Validation.getValidPesel(scanner);
+                            List<ClaimReport> reportsByPesel = insuranceCompany.getClaimsByPesel(pesel);
+                            if (reportsByPesel.isEmpty()) {
+                                System.out.println("Brak zgłoszonych roszczeń dla podanego PESEL.");
+                            } else {
+                                System.out.println("\nRaporty roszczeń dla PESEL " + pesel + ":");
+                                for (ClaimReport report : reportsByPesel) {
+                                    System.out.println(report);
+                                }
+                            }
+                        }
+                        case 3 -> {
+                            String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
+                            List<ClaimReport> reportsByPolicy = insuranceCompany.getClaimsByPolicy(policyNumber);
+                            if (reportsByPolicy.isEmpty()) {
+                                System.out.println("Brak zgłoszonych roszczeń dla podanej polisy.");
+                            } else {
+                                System.out.println("\nRaporty roszczeń dla polisy " + policyNumber + ":");
+                                for (ClaimReport report : reportsByPolicy) {
+                                    System.out.println(report);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 case 6 -> {
                     System.out.println("Wyszukiwanie polisy...");
                 }
