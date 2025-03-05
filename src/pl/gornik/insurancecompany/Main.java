@@ -32,7 +32,7 @@ public class Main {
             System.out.println("5 - Złożyć wniosek o ubezpieczenie");
             System.out.println("6 - Wyszukać polisę");
             System.out.println("7 - Wystawić polisę");
-            System.out.println("8 - Wyświetlić płatności");
+            System.out.println("8 - Dokonać płatności");
             System.out.println("9 - Wyświetlić składkę polisy");
             System.out.println("0 - Wyjście");
 
@@ -324,19 +324,47 @@ public class Main {
 
 
                 case 8 -> {
-                    System.out.println("Wyszukiwanie płatności...");
-                    System.out.println("\nPłatności:");
-                    for (Payment payment : insuranceCompany.getPayments()) {
-                        System.out.println(payment);
+                    System.out.println("Dokonywanie płatności...");
+                    System.out.println("Podaj numer polisy do opłacenia:");
+                    String policyNumber = scanner.next();
+                    Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
+                    if (policy != null) {
+                        System.out.println("Kwota do zapłaty: " + policy.getPremium());
+                        PaymentMethod paymentMethod = Validation.getValidEnum(scanner, PaymentMethod.class, "Podaj sposób dokonania płatności: ");
+                        System.out.println("Podaj kwotę płatności:");
+                        double amount = scanner.nextDouble();
+                        insuranceCompany.processPayment(policy, amount, paymentMethod);
+                    } else {
+                        System.out.println("Nie znaleziono polisy o podanym numerze.");
                     }
                 }
 
                 case 9 -> {
                     System.out.println("Obliczanie składek...");
-                    System.out.println("\nSkładki dla polis:");
-                    for (Policy policy : insuranceCompany.getPolicies()) {
-                        policy.updatePremium();
-                        System.out.printf("Polisa (%s) o numerze %s: %.2f\n", policy.getInsuranceType().getDisplayName(), policy.getPolicyNumber(), policy.getPremium());
+
+                    System.out.println("Wybierz opcję:");
+                    System.out.println("1 - Obliczyć składki dla wszystkich polis");
+                    System.out.println("2 - Obliczyć składkę dla konkretnej polisy");
+
+                    int caseChoice = Validation.getValidChoice(scanner, 1, 2);
+                    scanner.nextLine();
+
+                    if (caseChoice == 1) {
+                        System.out.println("\nSkładki dla polis:");
+                        for (Policy policy : insuranceCompany.getPolicies()) {
+                            policy.updatePremium();
+                            System.out.printf("Polisa (%s) o numerze %s: %.2f\n", policy.getInsuranceType().getDisplayName(), policy.getPolicyNumber(), policy.getPremium());
+                        }
+                    } else if (caseChoice == 2) {
+                        String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
+                        Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
+
+                        if (policy != null) {
+                            policy.updatePremium();
+                            System.out.printf("Składka dla polisy (%s) o numerze %s: %.2f\n", policy.getInsuranceType().getDisplayName(), policy.getPolicyNumber(), policy.getPremium());
+                        } else {
+                            System.out.println("Nie znaleziono polisy o podanym numerze.");
+                        }
                     }
                 }
 

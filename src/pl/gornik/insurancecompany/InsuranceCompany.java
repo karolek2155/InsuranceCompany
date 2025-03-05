@@ -1,5 +1,6 @@
 package pl.gornik.insurancecompany;
 
+import pl.gornik.insurancecompany.enums.PaymentMethod;
 import pl.gornik.insurancecompany.policies.Policy;
 
 import java.util.ArrayList;
@@ -10,6 +11,17 @@ public class InsuranceCompany {
     private List<Client> clients = new ArrayList<>();
     private List<ClaimReport> claimReports = new ArrayList<>();
     private List<Payment> payments = new ArrayList<>();
+
+    public void processPayment(Policy policy, double amount, PaymentMethod paymentMethod) {
+        double premium = policy.getPremium();
+        if (amount < premium) {
+            System.out.println("Podana kwota jest niższa niż wymagana składka: " + premium);
+            return;
+        }
+        Payment payment = new Payment(amount, paymentMethod);
+        payments.add(payment);
+        System.out.println("Płatność została zarejestrowana: " + payment);
+    }
 
     public List<Policy> getPoliciesByPesel(String pesel) {
         List<Policy> foundPolicies = new ArrayList<>();
