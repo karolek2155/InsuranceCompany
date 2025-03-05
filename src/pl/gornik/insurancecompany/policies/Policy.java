@@ -19,6 +19,21 @@ public abstract class Policy {
         this.issueDate = issueDate;
     }
 
+    public static String generatePolicyNumber(InsuranceType insuranceType) {
+        String prefix = switch (insuranceType) {
+            case LIFE -> "L";
+            case AUTO -> "A";
+            case PROPERTY -> "P";
+        };
+        int randomNumber = (int) (Math.random() * 90000 + 10000);
+        return prefix + randomNumber;
+    }
+
+
+    public Client getClient() {
+        return client;
+    }
+
     public InsuranceType getInsuranceType() {
         return insuranceType;
     }

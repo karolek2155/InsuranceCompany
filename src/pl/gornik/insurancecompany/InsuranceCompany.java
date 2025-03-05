@@ -11,6 +11,25 @@ public class InsuranceCompany {
     private List<ClaimReport> claimReports = new ArrayList<>();
     private List<Payment> payments = new ArrayList<>();
 
+    public List<Policy> getPoliciesByPesel(String pesel) {
+        List<Policy> foundPolicies = new ArrayList<>();
+        for (Policy policy : policies) {
+            if (policy.getClient().getPesel().equals(pesel)) {
+                foundPolicies.add(policy);
+            }
+        }
+        return foundPolicies;
+    }
+
+    public Policy getPolicyByNumber(String policyNumber) {
+        for (Policy policy : policies) {
+            if (policy.getPolicyNumber().equals(policyNumber)) {
+                return policy;
+            }
+        }
+        return null;
+    }
+
     public List<ClaimReport> getClaimsByPesel(String pesel) {
         List<ClaimReport> foundClaims = new ArrayList<>();
         for (ClaimReport report : claimReports) {

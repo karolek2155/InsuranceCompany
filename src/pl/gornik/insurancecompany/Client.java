@@ -29,10 +29,6 @@ public class Client {
         return lastName;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
     public String getPesel() {
         return pesel;
     }

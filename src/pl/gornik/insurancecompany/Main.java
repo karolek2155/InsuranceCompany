@@ -1,6 +1,7 @@
 package pl.gornik.insurancecompany;
 
 import pl.gornik.insurancecompany.enums.AutoInsuranceType;
+import pl.gornik.insurancecompany.enums.InsuranceType;
 import pl.gornik.insurancecompany.enums.PaymentMethod;
 import pl.gornik.insurancecompany.enums.PropertyInsuranceType;
 import pl.gornik.insurancecompany.policies.AutoInsurancePolicy;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static InsuranceCompany insuranceCompany = new InsuranceCompany();
+    private static final InsuranceCompany insuranceCompany = new InsuranceCompany();
 
     public static void main(String[] args) {
         System.out.println("System zarządzania polisami ubezpieczeniowymi, klientami, zgłoszeniami roszczeń oraz historią polis.");
@@ -27,8 +28,8 @@ public class Main {
             System.out.println("1 - Wyszukać klienta");
             System.out.println("2 - Dodać klienta");
             System.out.println("3 - Usunąć klienta");
-            System.out.println("4 - Złożyć wniosek o ubezpieczenie");
-            System.out.println("5 - Wyszukać roszczenie");
+            System.out.println("4 - Wyszukać roszczenie");
+            System.out.println("5 - Złożyć wniosek o ubezpieczenie");
             System.out.println("6 - Wyszukać polisę");
             System.out.println("7 - Wystawić polisę");
             System.out.println("8 - Wyświetlić płatności");
@@ -111,6 +112,7 @@ public class Main {
                     }
 
                 }
+
                 case 2 -> {
                     System.out.println("Dodawanie nowego klienta...");
 
@@ -125,6 +127,7 @@ public class Main {
                     System.out.println("Nowy klient został pomyślnie dodany:");
                     insuranceCompany.getClients().getLast().presentClient();
                 }
+
                 case 3 -> {
                     System.out.println("Usuwanie klienta...");
 
@@ -153,28 +156,6 @@ public class Main {
                 }
 
                 case 4 -> {
-                    System.out.println("Składanie wniosku o ubezpieczenie...");
-
-                    String pesel = Validation.getValidPesel(scanner);
-                    Client client = insuranceCompany.findClientByPesel(pesel);
-
-                    if (client == null) {
-                        System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
-                    } else {
-                        System.out.print("Podaj opis szkody: ");
-                        String description = scanner.nextLine().trim();
-                        System.out.print("Podaj numer polisy: ");
-                        String policyNumber = scanner.nextLine().trim();
-                        LocalDate reportDate = LocalDate.now();
-
-                        ClaimReport claimReport = new ClaimReport(client, description, reportDate, policyNumber);
-                        insuranceCompany.addClaimReport(claimReport);
-
-                        System.out.println("Wniosek o ubezpieczenie został pomyślnie złożony.");
-                    }
-                }
-
-                case 5 -> {
                     System.out.println("Wyszukiwanie roszczeń...");
 
                     System.out.println("Wybierz kryterium wyszukiwania:");
@@ -223,12 +204,125 @@ public class Main {
                     }
                 }
 
+                case 5 -> {
+                    System.out.println("Składanie wniosku o ubezpieczenie...");
+
+                    String pesel = Validation.getValidPesel(scanner);
+                    Client client = insuranceCompany.findClientByPesel(pesel);
+
+                    if (client == null) {
+                        System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
+                    } else {
+                        System.out.print("Podaj opis szkody: ");
+                        String description = scanner.nextLine().trim();
+                        System.out.print("Podaj numer polisy: ");
+                        String policyNumber = scanner.nextLine().trim();
+                        LocalDate reportDate = LocalDate.now();
+
+                        ClaimReport claimReport = new ClaimReport(client, description, reportDate, policyNumber);
+                        insuranceCompany.addClaimReport(claimReport);
+
+                        System.out.println("Wniosek o ubezpieczenie został pomyślnie złożony.");
+                    }
+                }
+
                 case 6 -> {
                     System.out.println("Wyszukiwanie polisy...");
+
+                    System.out.println("Wybierz kryterium wyszukiwania:");
+                    System.out.println("1 - Wszystkie polisy");
+                    System.out.println("2 - Polisy według numeru PESEL klienta");
+                    System.out.println("3 - Polisa według numeru polisy");
+
+                    int caseChoice = Validation.getValidChoice(scanner, 1, 3);
+
+                    switch (caseChoice) {
+                        case 1 -> {
+                            System.out.println("\nLista wszystkich polis:");
+                            List<Policy> allPolicies = insuranceCompany.getPolicies();
+                            if (allPolicies.isEmpty()) {
+                                System.out.println("Brak dostępnych polis.");
+                            } else {
+                                for (Policy policy : allPolicies) {
+                                    System.out.println(policy);
+                                }
+                            }
+                        }
+                        case 2 -> {
+                            String pesel = Validation.getValidPesel(scanner);
+                            List<Policy> policiesByPesel = insuranceCompany.getPoliciesByPesel(pesel);
+                            if (policiesByPesel.isEmpty()) {
+                                System.out.println("Brak polis powiązanych z podanym numerem PESEL.");
+                            } else {
+                                System.out.println("\nPolisy dla PESEL " + pesel + ":");
+                                for (Policy policy : policiesByPesel) {
+                                    System.out.println(policy);
+                                }
+                            }
+                        }
+                        case 3 -> {
+                            String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
+                            Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
+                            if (policy == null) {
+                                System.out.println("Nie znaleziono polisy o podanym numerze.");
+                            } else {
+                                System.out.println("\nZnaleziono polisę:");
+                                System.out.println(policy);
+                            }
+                        }
+                    }
                 }
+
                 case 7 -> {
                     System.out.println("Wystawianie nowej polisy...");
+
+                    String pesel = Validation.getValidPesel(scanner);
+                    Client client = insuranceCompany.findClientByPesel(pesel);
+
+                    if (client == null) {
+                        System.out.println("Nie znaleziono klienta o podanym PESEL.");
+                    } else {
+                        System.out.println("Wybierz rodzaj polisy:");
+                        System.out.println("1 - Ubezpieczenie na życie");
+                        System.out.println("2 - Ubezpieczenie samochodu");
+                        System.out.println("3 - Ubezpieczenie nieruchomości");
+                        int policyTypeChoice = Validation.getValidChoice(scanner, 1, 3);
+                        scanner.nextLine();
+
+                        LocalDate issueDate = LocalDate.now();
+                        double premiumAmount = Validation.getValidDouble(scanner, "Podaj składkę ubezpieczeniową: ");
+
+                        Policy newPolicy = null;
+
+                        switch (policyTypeChoice) {
+                            case 1 -> {
+                                String policyNumber = Policy.generatePolicyNumber(InsuranceType.LIFE);
+                                double insuredAmount = Validation.getValidDouble(scanner, "Podaj sumę ubezpieczenia: ");
+                                newPolicy = new LifeInsurancePolicy(policyNumber, client, premiumAmount, issueDate, insuredAmount);
+                            }
+                            case 2 -> {
+                                String policyNumber = Policy.generatePolicyNumber(InsuranceType.AUTO);
+                                AutoInsuranceType autoType = Validation.getValidEnum(scanner, AutoInsuranceType.class, "Podaj typ ubezpieczenia samochodu: ");
+                                newPolicy = new AutoInsurancePolicy(policyNumber, client, premiumAmount, issueDate, autoType);
+                            }
+                            case 3 -> {
+                                String policyNumber = Policy.generatePolicyNumber(InsuranceType.PROPERTY);
+                                PropertyInsuranceType propertyType = Validation.getValidEnum(scanner, PropertyInsuranceType.class, "Podaj typ ubezpieczenia nieruchomości: ");
+                                newPolicy = new PropertyInsurancePolicy(policyNumber, client, premiumAmount, issueDate, propertyType);
+                            }
+                        }
+
+                        if (newPolicy != null) {
+                            insuranceCompany.addPolicy(newPolicy);
+                            System.out.println("Polisa została pomyślnie wystawiona:");
+                            System.out.println(newPolicy);
+                        } else {
+                            System.out.println("Wystawienie polisy nie powiodło się.");
+                        }
+                    }
                 }
+
+
                 case 8 -> {
                     System.out.println("Wyszukiwanie płatności...");
                     System.out.println("\nPłatności:");
@@ -236,6 +330,7 @@ public class Main {
                         System.out.println(payment);
                     }
                 }
+
                 case 9 -> {
                     System.out.println("Obliczanie składek...");
                     System.out.println("\nSkładki dla polis:");
@@ -244,11 +339,11 @@ public class Main {
                         System.out.printf("Polisa (%s) o numerze %s: %.2f\n", policy.getInsuranceType().getDisplayName(), policy.getPolicyNumber(), policy.getPremium());
                     }
                 }
+
                 case 0 -> {
                     isActive = false;
                     System.out.println("Zakończono działanie systemu.");
                 }
-                default -> System.out.println("Niepoprawny wybór, spróbuj ponownie.");
             }
 
         }
