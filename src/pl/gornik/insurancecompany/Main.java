@@ -27,6 +27,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         initializeData();
+        Client client = null;
 
         System.out.print("Podaj email: ");
         String login = scanner.nextLine();
@@ -34,362 +35,55 @@ public class Main {
         String password = scanner.nextLine();
 
         User user = AuthenticationService.login(login, password);
+        if (user instanceof ClientUser) {
+            client = insuranceCompany.findClientByEmail(login);
+        }
+
         if (user != null) {
             System.out.println("Zalogowano: " + user.getEmail() + " jako " + user.getRole());
 
             boolean isActive = true;
 
             while (isActive) {
-                System.out.println("Co chcesz zrobić? (wpisz numer)");
-                System.out.println("1 - Wyszukać klienta");
-                System.out.println("2 - Dodać klienta");
-                System.out.println("3 - Usunąć klienta");
-                System.out.println("4 - Wyszukać roszczenie");
-                System.out.println("5 - Złożyć wniosek o ubezpieczenie");
-                System.out.println("6 - Wyszukać polisę");
-                System.out.println("7 - Wystawić polisę");
-                System.out.println("8 - Dokonać płatności");
-                System.out.println("9 - Wyświetlić składkę polisy");
-                System.out.println("0 - Wyjście");
+                System.out.println("\nWybierz opcję:");
+                if (user instanceof AdminUser) {
+                    System.out.println("1 - Zarządzanie użytkownikami");
+                    System.out.println("2 - Zarządzanie klientami");
+                    System.out.println("3 - Przeglądanie zgłoszeń roszczeń");
+                }
+                if (user instanceof EmployeeUser) {
+                    System.out.println("4 - Wyszukiwanie polis");
+                    System.out.println("5 - Obsługa roszczeń");
+                    System.out.println("6 - Wystawianie polis");
+                    System.out.println("7 - Dokonywanie płatności");
+                    System.out.println("8 - Obliczanie składek");
+                }
+                if (user instanceof ClientUser) {
+                    System.out.println("9 - Podgląd moich polis");
+                    System.out.println("10 - Składanie wniosków o roszczenie");
+                }
+                System.out.println("0 - Wyloguj");
 
-                int choice = Validation.getValidChoice(scanner, 0, 9);
+                int choice = Validation.getValidChoice(scanner, 0, 10);
                 scanner.nextLine();
 
                 switch (choice) {
-                    case 1 -> {
-                        System.out.println("Wyszukiwanie klienta...");
-                        System.out.println("1 - Wyszukać po imieniu i nazwisku");
-                        System.out.println("2 - Wyszukać po numerze PESEL");
-                        System.out.println("3 - Wyszukać po numerze telefonu");
-                        System.out.println("4 - Wyszukać po adresie e-mail");
-                        System.out.println("5 - Wyświetlić wszystkich klientów");
-                        int caseChoice = Validation.getValidChoice(scanner, 1, 5);
-                        scanner.nextLine();
-                        System.out.println();
-
-                        switch (caseChoice) {
-                            case 1 -> {
-                                String firstName = Validation.getValidNotEmptyString(scanner, "Podaj imię klienta: ");
-                                String lastName = Validation.getValidNotEmptyString(scanner, "Podaj nazwisko klienta: ");
-                                List<Client> foundClients = insuranceCompany.findClientsByFullName(firstName, lastName);
-
-                                if (foundClients.isEmpty()) {
-                                    System.out.println("Nie znaleziono klienta o podanym imieniu i nazwisku.");
-                                } else if (foundClients.size() == 1) {
-                                    System.out.println("Znaleziono klienta:");
-                                    foundClients.getFirst().presentClient();
-                                } else {
-                                    System.out.println("Znaleziono następujących klientów:");
-                                    for (Client client : foundClients) {
-                                        client.presentClient();
-                                    }
-                                }
-                            }
-                            case 2 -> {
-                                String pesel = Validation.getValidPesel(scanner);
-                                Client foundClient = insuranceCompany.findClientByPesel(pesel);
-
-                                if (foundClient == null) {
-                                    System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
-                                } else {
-                                    System.out.println("Znaleziono klienta:");
-                                    foundClient.presentClient();
-                                }
-                            }
-                            case 3 -> {
-                                String phone = Validation.getValidPhone(scanner);
-                                Client foundClient = insuranceCompany.findClientByPhoneNumber(phone);
-
-                                if (foundClient == null) {
-                                    System.out.println("Nie znaleziono klienta o podanym numerze telefonu.");
-                                } else {
-                                    System.out.println("Znaleziono klienta:");
-                                    foundClient.presentClient();
-                                }
-                            }
-                            case 4 -> {
-                                String email = Validation.getValidEmail(scanner);
-                                Client foundClient = insuranceCompany.findClientByEmail(email);
-
-                                if (foundClient == null) {
-                                    System.out.println("Nie znaleziono klienta o podanym adresie e-mail.");
-                                } else {
-                                    System.out.println("Znaleziono klienta:");
-                                    foundClient.presentClient();
-                                }
-                            }
-                            case 5 -> {
-                                System.out.println("Wszyscy klienci:");
-                                for (Client client : insuranceCompany.getClients()) {
-                                    client.presentClient();
-                                }
-                            }
-                            default -> System.out.println("Niepoprawny wybór.");
-                        }
-
-                    }
-
-                    case 2 -> {
-                        System.out.println("Dodawanie nowego klienta...");
-
-                        String firstName = Validation.getValidNotEmptyString(scanner, "Podaj imię klienta: ");
-                        String lastName = Validation.getValidNotEmptyString(scanner, "Podaj nazwisko klienta: ");
-                        String pesel = Validation.getValidPesel(scanner);
-                        String phone = Validation.getValidPhone(scanner);
-                        String email = Validation.getValidEmail(scanner);
-                        String address = Validation.getValidNotEmptyString(scanner, "Podaj adres zamieszkania klienta: ");
-
-                        insuranceCompany.addClient(new Client(firstName, lastName, address, pesel, phone, email));
-                        System.out.println("Nowy klient został pomyślnie dodany:");
-                        insuranceCompany.getClients().getLast().presentClient();
-                    }
-
-                    case 3 -> {
-                        System.out.println("Usuwanie klienta...");
-
-                        String pesel = Validation.getValidPesel(scanner);
-                        Client clientToRemove = insuranceCompany.findClientByPesel(pesel);
-
-                        if (clientToRemove == null) {
-                            System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
-                        } else {
-                            System.out.println("Znaleziono klienta:");
-                            clientToRemove.presentClient();
-                            System.out.print("Czy na pewno chcesz usunąć tego klienta? (tak/nie): ");
-                            String confirmation = scanner.nextLine().trim().toLowerCase();
-
-                            if (confirmation.equals("tak")) {
-                                boolean removed = insuranceCompany.removeClient(clientToRemove);
-                                if (removed) {
-                                    System.out.println("Klient został pomyślnie usunięty.");
-                                } else {
-                                    System.out.println("Nie udało się usunąć klienta.");
-                                }
-                            } else {
-                                System.out.println("Anulowano usunięcie klienta.");
-                            }
-                        }
-                    }
-
-                    case 4 -> {
-                        System.out.println("Wyszukiwanie roszczeń...");
-
-                        System.out.println("Wybierz kryterium wyszukiwania:");
-                        System.out.println("1 - Wszystkie roszczenia");
-                        System.out.println("2 - Roszczenia według numeru PESEL klienta");
-                        System.out.println("3 - Roszczenia według numeru polisy");
-
-                        int caseChoice = Validation.getValidChoice(scanner, 1, 3);
-
-                        switch (caseChoice) {
-                            case 1 -> {
-                                System.out.println("\nRaporty roszczeń:");
-                                List<ClaimReport> allReports = insuranceCompany.getClaimReports();
-                                if (allReports.isEmpty()) {
-                                    System.out.println("Brak zgłoszonych roszczeń.");
-                                } else {
-                                    for (ClaimReport report : allReports) {
-                                        System.out.println(report);
-                                    }
-                                }
-                            }
-                            case 2 -> {
-                                String pesel = Validation.getValidPesel(scanner);
-                                List<ClaimReport> reportsByPesel = insuranceCompany.getClaimsByPesel(pesel);
-                                if (reportsByPesel.isEmpty()) {
-                                    System.out.println("Brak zgłoszonych roszczeń dla podanego PESEL.");
-                                } else {
-                                    System.out.println("\nRaporty roszczeń dla PESEL " + pesel + ":");
-                                    for (ClaimReport report : reportsByPesel) {
-                                        System.out.println(report);
-                                    }
-                                }
-                            }
-                            case 3 -> {
-                                String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
-                                List<ClaimReport> reportsByPolicy = insuranceCompany.getClaimsByPolicy(policyNumber);
-                                if (reportsByPolicy.isEmpty()) {
-                                    System.out.println("Brak zgłoszonych roszczeń dla podanej polisy.");
-                                } else {
-                                    System.out.println("\nRaporty roszczeń dla polisy " + policyNumber + ":");
-                                    for (ClaimReport report : reportsByPolicy) {
-                                        System.out.println(report);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    case 5 -> {
-                        System.out.println("Składanie wniosku o ubezpieczenie...");
-
-                        String pesel = Validation.getValidPesel(scanner);
-                        Client client = insuranceCompany.findClientByPesel(pesel);
-
-                        if (client == null) {
-                            System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
-                        } else {
-                            System.out.print("Podaj opis szkody: ");
-                            String description = scanner.nextLine().trim();
-                            System.out.print("Podaj numer polisy: ");
-                            String policyNumber = scanner.nextLine().trim();
-                            LocalDate reportDate = LocalDate.now();
-
-                            ClaimReport claimReport = new ClaimReport(client, description, reportDate, policyNumber);
-                            insuranceCompany.addClaimReport(claimReport);
-
-                            System.out.println("Wniosek o ubezpieczenie został pomyślnie złożony.");
-                        }
-                    }
-
-                    case 6 -> {
-                        System.out.println("Wyszukiwanie polisy...");
-
-                        System.out.println("Wybierz kryterium wyszukiwania:");
-                        System.out.println("1 - Wszystkie polisy");
-                        System.out.println("2 - Polisy według numeru PESEL klienta");
-                        System.out.println("3 - Polisa według numeru polisy");
-
-                        int caseChoice = Validation.getValidChoice(scanner, 1, 3);
-
-                        switch (caseChoice) {
-                            case 1 -> {
-                                System.out.println("\nLista wszystkich polis:");
-                                List<Policy> allPolicies = insuranceCompany.getPolicies();
-                                if (allPolicies.isEmpty()) {
-                                    System.out.println("Brak dostępnych polis.");
-                                } else {
-                                    for (Policy policy : allPolicies) {
-                                        System.out.println(policy);
-                                    }
-                                }
-                            }
-                            case 2 -> {
-                                String pesel = Validation.getValidPesel(scanner);
-                                List<Policy> policiesByPesel = insuranceCompany.getPoliciesByPesel(pesel);
-                                if (policiesByPesel.isEmpty()) {
-                                    System.out.println("Brak polis powiązanych z podanym numerem PESEL.");
-                                } else {
-                                    System.out.println("\nPolisy dla PESEL " + pesel + ":");
-                                    for (Policy policy : policiesByPesel) {
-                                        System.out.println(policy);
-                                    }
-                                }
-                            }
-                            case 3 -> {
-                                String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
-                                Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
-                                if (policy == null) {
-                                    System.out.println("Nie znaleziono polisy o podanym numerze.");
-                                } else {
-                                    System.out.println("\nZnaleziono polisę:");
-                                    System.out.println(policy);
-                                }
-                            }
-                        }
-                    }
-
-                    case 7 -> {
-                        System.out.println("Wystawianie nowej polisy...");
-
-                        String pesel = Validation.getValidPesel(scanner);
-                        Client client = insuranceCompany.findClientByPesel(pesel);
-
-                        if (client == null) {
-                            System.out.println("Nie znaleziono klienta o podanym PESEL.");
-                        } else {
-                            System.out.println("Wybierz rodzaj polisy:");
-                            System.out.println("1 - Ubezpieczenie na życie");
-                            System.out.println("2 - Ubezpieczenie samochodu");
-                            System.out.println("3 - Ubezpieczenie nieruchomości");
-                            int policyTypeChoice = Validation.getValidChoice(scanner, 1, 3);
-                            scanner.nextLine();
-
-                            LocalDate issueDate = LocalDate.now();
-                            double premiumAmount = Validation.getValidDouble(scanner, "Podaj składkę ubezpieczeniową: ");
-
-                            Policy newPolicy = null;
-
-                            switch (policyTypeChoice) {
-                                case 1 -> {
-                                    String policyNumber = Policy.generatePolicyNumber(InsuranceType.LIFE);
-                                    double insuredAmount = Validation.getValidDouble(scanner, "Podaj sumę ubezpieczenia: ");
-                                    newPolicy = new LifeInsurancePolicy(policyNumber, client, premiumAmount, issueDate, insuredAmount);
-                                }
-                                case 2 -> {
-                                    String policyNumber = Policy.generatePolicyNumber(InsuranceType.AUTO);
-                                    AutoInsuranceType autoType = Validation.getValidEnum(scanner, AutoInsuranceType.class, "Podaj typ ubezpieczenia samochodu: ");
-                                    newPolicy = new AutoInsurancePolicy(policyNumber, client, premiumAmount, issueDate, autoType);
-                                }
-                                case 3 -> {
-                                    String policyNumber = Policy.generatePolicyNumber(InsuranceType.PROPERTY);
-                                    PropertyInsuranceType propertyType = Validation.getValidEnum(scanner, PropertyInsuranceType.class, "Podaj typ ubezpieczenia nieruchomości: ");
-                                    newPolicy = new PropertyInsurancePolicy(policyNumber, client, premiumAmount, issueDate, propertyType);
-                                }
-                            }
-
-                            if (newPolicy != null) {
-                                insuranceCompany.addPolicy(newPolicy);
-                                System.out.println("Polisa została pomyślnie wystawiona:");
-                                System.out.println(newPolicy);
-                            } else {
-                                System.out.println("Wystawienie polisy nie powiodło się.");
-                            }
-                        }
-                    }
-
-
-                    case 8 -> {
-                        System.out.println("Dokonywanie płatności...");
-                        System.out.println("Podaj numer polisy do opłacenia:");
-                        String policyNumber = scanner.next();
-                        Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
-                        if (policy != null) {
-                            System.out.println("Kwota do zapłaty: " + policy.getPremium());
-                            PaymentMethod paymentMethod = Validation.getValidEnum(scanner, PaymentMethod.class, "Podaj sposób dokonania płatności: ");
-                            System.out.println("Podaj kwotę płatności:");
-                            double amount = scanner.nextDouble();
-                            insuranceCompany.processPayment(policy, amount, paymentMethod);
-                        } else {
-                            System.out.println("Nie znaleziono polisy o podanym numerze.");
-                        }
-                    }
-
-                    case 9 -> {
-                        System.out.println("Obliczanie składek...");
-
-                        System.out.println("Wybierz opcję:");
-                        System.out.println("1 - Obliczyć składki dla wszystkich polis");
-                        System.out.println("2 - Obliczyć składkę dla konkretnej polisy");
-
-                        int caseChoice = Validation.getValidChoice(scanner, 1, 2);
-                        scanner.nextLine();
-
-                        if (caseChoice == 1) {
-                            System.out.println("\nSkładki dla polis:");
-                            for (Policy policy : insuranceCompany.getPolicies()) {
-                                policy.updatePremium();
-                                System.out.printf("Polisa (%s) o numerze %s: %.2f\n", policy.getInsuranceType().getDisplayName(), policy.getPolicyNumber(), policy.getPremium());
-                            }
-                        } else if (caseChoice == 2) {
-                            String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
-                            Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
-
-                            if (policy != null) {
-                                policy.updatePremium();
-                                System.out.printf("Składka dla polisy (%s) o numerze %s: %.2f\n", policy.getInsuranceType().getDisplayName(), policy.getPolicyNumber(), policy.getPremium());
-                            } else {
-                                System.out.println("Nie znaleziono polisy o podanym numerze.");
-                            }
-                        }
-                    }
-
+                    case 1 -> { if (user instanceof AdminUser) manageUsers(scanner); }
+                    case 2 -> { if (user instanceof AdminUser) manageClients(scanner); }
+                    case 3 -> { if (user instanceof AdminUser) viewClaims(scanner); }
+                    case 4 -> { if (user instanceof EmployeeUser) managePolicies(scanner); }
+                    case 5 -> { if (user instanceof EmployeeUser) manageClaims(scanner); }
+                    case 6 -> { if (user instanceof EmployeeUser) issuePolicy(scanner); }
+                    case 7 -> { if (user instanceof EmployeeUser) processPayment(scanner); }
+                    case 8 -> { if (user instanceof EmployeeUser) calculatePremiums(scanner); }
+                    case 9 -> { if (user instanceof ClientUser) viewClientPolicies(scanner, client); }
+                    case 10 -> { if (user instanceof ClientUser) submitClaim(scanner, client); }
                     case 0 -> {
                         isActive = false;
-                        System.out.println("Zakończono działanie systemu.");
+                        System.out.println("Wylogowano");
                     }
+                    default -> System.out.println("Niepoprawny wybór.");
                 }
-
             }
         } else {
             System.out.println("Niepoprawne dane logowania");
@@ -397,6 +91,396 @@ public class Main {
 
         scanner.close();
 
+    }
+
+    public static void manageUsers(Scanner scanner) {
+        System.out.println("Zarządzanie użytkownikami...");
+    }
+
+    public static void manageClients(Scanner scanner) {
+        System.out.println("Zarządzanie klientami...");
+        System.out.println("1 - Wyszukać klienta");
+        System.out.println("2 - Dodać klienta");
+        System.out.println("3 - Usunąć klienta");
+        int choice = Validation.getValidChoice(scanner, 1, 3);
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1 -> {
+                System.out.println("Wyszukiwanie klienta...");
+                System.out.println("1 - Wyszukać po imieniu i nazwisku");
+                System.out.println("2 - Wyszukać po numerze PESEL");
+                System.out.println("3 - Wyszukać po numerze telefonu");
+                System.out.println("4 - Wyszukać po adresie e-mail");
+                System.out.println("5 - Wyświetlić wszystkich klientów");
+                int caseChoice = Validation.getValidChoice(scanner, 1, 5);
+                scanner.nextLine();
+                System.out.println();
+
+                switch (caseChoice) {
+                    case 1 -> {
+                        String firstName = Validation.getValidNotEmptyString(scanner, "Podaj imię klienta: ");
+                        String lastName = Validation.getValidNotEmptyString(scanner, "Podaj nazwisko klienta: ");
+                        List<Client> foundClients = insuranceCompany.findClientsByFullName(firstName, lastName);
+
+                        if (foundClients.isEmpty()) {
+                            System.out.println("Nie znaleziono klienta o podanym imieniu i nazwisku.");
+                        } else if (foundClients.size() == 1) {
+                            System.out.println("Znaleziono klienta:");
+                            foundClients.getFirst().presentClient();
+                        } else {
+                            System.out.println("Znaleziono następujących klientów:");
+                            for (Client client : foundClients) {
+                                client.presentClient();
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        String pesel = Validation.getValidPesel(scanner);
+                        Client foundClient = insuranceCompany.findClientByPesel(pesel);
+
+                        if (foundClient == null) {
+                            System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
+                        } else {
+                            System.out.println("Znaleziono klienta:");
+                            foundClient.presentClient();
+                        }
+                    }
+                    case 3 -> {
+                        String phone = Validation.getValidPhone(scanner);
+                        Client foundClient = insuranceCompany.findClientByPhoneNumber(phone);
+
+                        if (foundClient == null) {
+                            System.out.println("Nie znaleziono klienta o podanym numerze telefonu.");
+                        } else {
+                            System.out.println("Znaleziono klienta:");
+                            foundClient.presentClient();
+                        }
+                    }
+                    case 4 -> {
+                        String email = Validation.getValidEmail(scanner);
+                        Client foundClient = insuranceCompany.findClientByEmail(email);
+
+                        if (foundClient == null) {
+                            System.out.println("Nie znaleziono klienta o podanym adresie e-mail.");
+                        } else {
+                            System.out.println("Znaleziono klienta:");
+                            foundClient.presentClient();
+                        }
+                    }
+                    case 5 -> {
+                        System.out.println("Wszyscy klienci:");
+                        for (Client client : insuranceCompany.getClients()) {
+                            client.presentClient();
+                        }
+                    }
+                    default -> System.out.println("Niepoprawny wybór.");
+                }
+            }
+            case 2 -> {
+                System.out.println("Dodawanie nowego klienta...");
+
+                String firstName = Validation.getValidNotEmptyString(scanner, "Podaj imię klienta: ");
+                String lastName = Validation.getValidNotEmptyString(scanner, "Podaj nazwisko klienta: ");
+                String pesel = Validation.getValidPesel(scanner);
+                String phone = Validation.getValidPhone(scanner);
+                String email = Validation.getValidEmail(scanner);
+                String address = Validation.getValidNotEmptyString(scanner, "Podaj adres zamieszkania klienta: ");
+
+                insuranceCompany.addClient(new Client(firstName, lastName, address, pesel, phone, email));
+                System.out.println("Nowy klient został pomyślnie dodany:");
+                insuranceCompany.getClients().getLast().presentClient();
+            }
+            case 3 -> {
+                System.out.println("Usuwanie klienta...");
+
+                String pesel = Validation.getValidPesel(scanner);
+                Client clientToRemove = insuranceCompany.findClientByPesel(pesel);
+
+                if (clientToRemove == null) {
+                    System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
+                } else {
+                    System.out.println("Znaleziono klienta:");
+                    clientToRemove.presentClient();
+                    System.out.print("Czy na pewno chcesz usunąć tego klienta? (tak/nie): ");
+                    String confirmation = scanner.nextLine().trim().toLowerCase();
+
+                    if (confirmation.equals("tak")) {
+                        boolean removed = insuranceCompany.removeClient(clientToRemove);
+                        if (removed) {
+                            System.out.println("Klient został pomyślnie usunięty.");
+                        } else {
+                            System.out.println("Nie udało się usunąć klienta.");
+                        }
+                    } else {
+                        System.out.println("Anulowano usunięcie klienta.");
+                    }
+                }
+            }
+        }
+    }
+
+    public static void viewClaims(Scanner scanner) {
+        System.out.println("Wyszukiwanie roszczeń...");
+
+        System.out.println("Wybierz kryterium wyszukiwania:");
+        System.out.println("1 - Wszystkie roszczenia");
+        System.out.println("2 - Roszczenia według numeru PESEL klienta");
+        System.out.println("3 - Roszczenia według numeru polisy");
+
+        int caseChoice = Validation.getValidChoice(scanner, 1, 3);
+
+        switch (caseChoice) {
+            case 1 -> {
+                System.out.println("\nRaporty roszczeń:");
+                List<ClaimReport> allReports = insuranceCompany.getClaimReports();
+                if (allReports.isEmpty()) {
+                    System.out.println("Brak zgłoszonych roszczeń.");
+                } else {
+                    for (ClaimReport report : allReports) {
+                        System.out.println(report);
+                    }
+                }
+            }
+            case 2 -> {
+                String pesel = Validation.getValidPesel(scanner);
+                List<ClaimReport> reportsByPesel = insuranceCompany.getClaimsByPesel(pesel);
+                if (reportsByPesel.isEmpty()) {
+                    System.out.println("Brak zgłoszonych roszczeń dla podanego PESEL.");
+                } else {
+                    System.out.println("\nRaporty roszczeń dla PESEL " + pesel + ":");
+                    for (ClaimReport report : reportsByPesel) {
+                        System.out.println(report);
+                    }
+                }
+            }
+            case 3 -> {
+                String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
+                List<ClaimReport> reportsByPolicy = insuranceCompany.getClaimsByPolicy(policyNumber);
+                if (reportsByPolicy.isEmpty()) {
+                    System.out.println("Brak zgłoszonych roszczeń dla podanej polisy.");
+                } else {
+                    System.out.println("\nRaporty roszczeń dla polisy " + policyNumber + ":");
+                    for (ClaimReport report : reportsByPolicy) {
+                        System.out.println(report);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void managePolicies(Scanner scanner) {
+        System.out.println("Wyszukiwanie polisy...");
+
+        System.out.println("Wybierz kryterium wyszukiwania:");
+        System.out.println("1 - Wszystkie polisy");
+        System.out.println("2 - Polisy według numeru PESEL klienta");
+        System.out.println("3 - Polisa według numeru polisy");
+
+        int caseChoice = Validation.getValidChoice(scanner, 1, 3);
+
+        switch (caseChoice) {
+            case 1 -> {
+                System.out.println("\nLista wszystkich polis:");
+                List<Policy> allPolicies = insuranceCompany.getPolicies();
+                if (allPolicies.isEmpty()) {
+                    System.out.println("Brak dostępnych polis.");
+                } else {
+                    for (Policy policy : allPolicies) {
+                        System.out.println(policy);
+                    }
+                }
+            }
+            case 2 -> {
+                String pesel = Validation.getValidPesel(scanner);
+                List<Policy> policiesByPesel = insuranceCompany.getPoliciesByPesel(pesel);
+                if (policiesByPesel.isEmpty()) {
+                    System.out.println("Brak polis powiązanych z podanym numerem PESEL.");
+                } else {
+                    System.out.println("\nPolisy dla PESEL " + pesel + ":");
+                    for (Policy policy : policiesByPesel) {
+                        System.out.println(policy);
+                    }
+                }
+            }
+            case 3 -> {
+                String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
+                Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
+                if (policy == null) {
+                    System.out.println("Nie znaleziono polisy o podanym numerze.");
+                } else {
+                    System.out.println("\nZnaleziono polisę:");
+                    System.out.println(policy);
+                }
+            }
+        }
+    }
+
+    public static void manageClaims(Scanner scanner) {
+        System.out.println("Składanie wniosku o ubezpieczenie...");
+
+        String pesel = Validation.getValidPesel(scanner);
+        Client client = insuranceCompany.findClientByPesel(pesel);
+
+        if (client == null) {
+            System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
+        } else {
+            System.out.print("Podaj opis szkody: ");
+            String description = scanner.nextLine().trim();
+            System.out.print("Podaj numer polisy: ");
+            String policyNumber = scanner.nextLine().trim();
+            LocalDate reportDate = LocalDate.now();
+
+            ClaimReport claimReport = new ClaimReport(client, description, reportDate, policyNumber);
+            insuranceCompany.addClaimReport(claimReport);
+
+            System.out.println("Wniosek o ubezpieczenie został pomyślnie złożony.");
+        }
+    }
+
+    public static void issuePolicy(Scanner scanner) {
+        System.out.println("Wystawianie polisy...");
+        System.out.println("Wystawianie nowej polisy...");
+
+        String pesel = Validation.getValidPesel(scanner);
+        Client client = insuranceCompany.findClientByPesel(pesel);
+
+        if (client == null) {
+            System.out.println("Nie znaleziono klienta o podanym PESEL.");
+        } else {
+            System.out.println("Wybierz rodzaj polisy:");
+            System.out.println("1 - Ubezpieczenie na życie");
+            System.out.println("2 - Ubezpieczenie samochodu");
+            System.out.println("3 - Ubezpieczenie nieruchomości");
+            int policyTypeChoice = Validation.getValidChoice(scanner, 1, 3);
+            scanner.nextLine();
+
+            LocalDate issueDate = LocalDate.now();
+            double premiumAmount = Validation.getValidDouble(scanner, "Podaj składkę ubezpieczeniową: ");
+
+            Policy newPolicy = null;
+
+            switch (policyTypeChoice) {
+                case 1 -> {
+                    String policyNumber = Policy.generatePolicyNumber(InsuranceType.LIFE);
+                    double insuredAmount = Validation.getValidDouble(scanner, "Podaj sumę ubezpieczenia: ");
+                    newPolicy = new LifeInsurancePolicy(policyNumber, client, premiumAmount, issueDate, insuredAmount);
+                }
+                case 2 -> {
+                    String policyNumber = Policy.generatePolicyNumber(InsuranceType.AUTO);
+                    AutoInsuranceType autoType = Validation.getValidEnum(scanner, AutoInsuranceType.class, "Podaj typ ubezpieczenia samochodu: ");
+                    newPolicy = new AutoInsurancePolicy(policyNumber, client, premiumAmount, issueDate, autoType);
+                }
+                case 3 -> {
+                    String policyNumber = Policy.generatePolicyNumber(InsuranceType.PROPERTY);
+                    PropertyInsuranceType propertyType = Validation.getValidEnum(scanner, PropertyInsuranceType.class, "Podaj typ ubezpieczenia nieruchomości: ");
+                    newPolicy = new PropertyInsurancePolicy(policyNumber, client, premiumAmount, issueDate, propertyType);
+                }
+            }
+
+            if (newPolicy != null) {
+                insuranceCompany.addPolicy(newPolicy);
+                System.out.println("Polisa została pomyślnie wystawiona:");
+                System.out.println(newPolicy);
+            } else {
+                System.out.println("Wystawienie polisy nie powiodło się.");
+            }
+        }    }
+
+    public static void processPayment(Scanner scanner) {
+        System.out.println("Dokonywanie płatności...");
+        System.out.println("Podaj numer polisy do opłacenia:");
+        String policyNumber = scanner.next();
+        Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
+        if (policy != null) {
+            System.out.println("Kwota do zapłaty: " + policy.getPremium());
+            PaymentMethod paymentMethod = Validation.getValidEnum(scanner, PaymentMethod.class, "Podaj sposób dokonania płatności: ");
+            System.out.println("Podaj kwotę płatności:");
+            double amount = scanner.nextDouble();
+            insuranceCompany.processPayment(policy, amount, paymentMethod);
+        } else {
+            System.out.println("Nie znaleziono polisy o podanym numerze.");
+        }
+    }
+
+    public static void calculatePremiums(Scanner scanner) {
+        System.out.println("Obliczanie składek...");
+
+        System.out.println("Wybierz opcję:");
+        System.out.println("1 - Obliczyć składki dla wszystkich polis");
+        System.out.println("2 - Obliczyć składkę dla konkretnej polisy");
+
+        int caseChoice = Validation.getValidChoice(scanner, 1, 2);
+        scanner.nextLine();
+
+        if (caseChoice == 1) {
+            System.out.println("\nSkładki dla polis:");
+            for (Policy policy : insuranceCompany.getPolicies()) {
+                policy.updatePremium();
+                System.out.printf("Polisa (%s) o numerze %s: %.2f\n", policy.getInsuranceType().getDisplayName(), policy.getPolicyNumber(), policy.getPremium());
+            }
+        } else if (caseChoice == 2) {
+            String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
+            Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
+
+            if (policy != null) {
+                policy.updatePremium();
+                System.out.printf("Składka dla polisy (%s) o numerze %s: %.2f\n", policy.getInsuranceType().getDisplayName(), policy.getPolicyNumber(), policy.getPremium());
+            } else {
+                System.out.println("Nie znaleziono polisy o podanym numerze.");
+            }
+        }
+    }
+
+    public static void viewClientPolicies(Scanner scanner, Client client) {
+        System.out.println("Wyszukiwanie polisy...");
+
+        System.out.println("Wybierz kryterium wyszukiwania:");
+        System.out.println("1 - Wszystkie Twoje polisy");
+        System.out.println("2 - Polisa według numeru polisy");
+
+        int caseChoice = Validation.getValidChoice(scanner, 1, 2);
+
+        switch (caseChoice) {
+            case 1 -> {
+                System.out.println("\nLista Twoich polis:");
+                List<Policy> userPolicies = insuranceCompany.getPoliciesByPesel(client.getPesel());
+                if (userPolicies.isEmpty()) {
+                    System.out.println("Nie posiadasz żadnych polis.");
+                } else {
+                    for (Policy policy : userPolicies) {
+                        System.out.println(policy);
+                    }
+                }
+            }
+            case 2 -> {
+                String policyNumber = Validation.getValidNotEmptyString(scanner, "Podaj numer polisy: ");
+                Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
+                if (policy == null || !policy.getClient().getPesel().equals(client.getPesel())) {
+                    System.out.println("Nie znaleziono Twojej polisy o podanym numerze.");
+                } else {
+                    System.out.println("\nZnaleziono Twoją polisę:");
+                    System.out.println(policy);
+                }
+            }
+        }
+    }
+
+    public static void submitClaim(Scanner scanner, Client client) {
+        System.out.println("Zgłaszanie roszczenia...");
+
+            System.out.println("Składanie wniosku o ubezpieczenie...");
+
+            System.out.print("Podaj opis szkody: ");
+            String description = scanner.nextLine().trim();
+            System.out.print("Podaj numer polisy: ");
+            String policyNumber = scanner.nextLine().trim();
+            LocalDate reportDate = LocalDate.now();
+
+            ClaimReport claimReport = new ClaimReport(client, description, reportDate, policyNumber);
+
+            insuranceCompany.addClaimReport(claimReport);
+            System.out.println("Wniosek o ubezpieczenie został pomyślnie złożony.");
     }
 
     public static void initializeData() {
