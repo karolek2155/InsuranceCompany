@@ -1,17 +1,16 @@
 package pl.gornik.insurancecompany;
 
-import pl.gornik.insurancecompany.enums.AutoInsuranceType;
-import pl.gornik.insurancecompany.enums.InsuranceType;
-import pl.gornik.insurancecompany.enums.PaymentMethod;
-import pl.gornik.insurancecompany.enums.PropertyInsuranceType;
-import pl.gornik.insurancecompany.policies.AutoInsurancePolicy;
-import pl.gornik.insurancecompany.policies.LifeInsurancePolicy;
-import pl.gornik.insurancecompany.policies.Policy;
-import pl.gornik.insurancecompany.policies.PropertyInsurancePolicy;
-import pl.gornik.insurancecompany.users.AdminUser;
-import pl.gornik.insurancecompany.users.ClientUser;
-import pl.gornik.insurancecompany.users.EmployeeUser;
-import pl.gornik.insurancecompany.users.User;
+import pl.gornik.insurancecompany.model.enums.AutoInsuranceType;
+import pl.gornik.insurancecompany.model.enums.InsuranceType;
+import pl.gornik.insurancecompany.model.enums.PaymentMethod;
+import pl.gornik.insurancecompany.model.enums.PropertyInsuranceType;
+import pl.gornik.insurancecompany.model.policies.AutoInsurancePolicy;
+import pl.gornik.insurancecompany.model.policies.LifeInsurancePolicy;
+import pl.gornik.insurancecompany.model.policies.Policy;
+import pl.gornik.insurancecompany.model.policies.PropertyInsurancePolicy;
+import pl.gornik.insurancecompany.service.*;
+import pl.gornik.insurancecompany.tools.Validation;
+import pl.gornik.insurancecompany.model.users.*;
 
 import java.time.LocalDate;
 import java.util.List;

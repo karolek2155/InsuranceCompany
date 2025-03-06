@@ -1,7 +1,7 @@
-package pl.gornik.insurancecompany;
+package pl.gornik.insurancecompany.service;
 
-import pl.gornik.insurancecompany.enums.PaymentMethod;
-import pl.gornik.insurancecompany.policies.Policy;
+import pl.gornik.insurancecompany.model.enums.PaymentMethod;
+import pl.gornik.insurancecompany.model.policies.Policy;
 
 import java.util.ArrayList;
 import java.util.List;

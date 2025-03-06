@@ -1,4 +1,4 @@
-package pl.gornik.insurancecompany;
+package pl.gornik.insurancecompany.service;
 
 public class Client {
     private String firstName;

@@ -1,4 +1,4 @@
-package pl.gornik.insurancecompany.users;
+package pl.gornik.insurancecompany.model.users;
 
 public abstract class User {
     protected String email;

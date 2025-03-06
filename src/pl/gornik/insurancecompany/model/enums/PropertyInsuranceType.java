@@ -1,4 +1,4 @@
-package pl.gornik.insurancecompany.enums;
+package pl.gornik.insurancecompany.model.enums;
 
 public enum PropertyInsuranceType {
     HOME,

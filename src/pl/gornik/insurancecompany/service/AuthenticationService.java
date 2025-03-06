@@ -1,6 +1,6 @@
-package pl.gornik.insurancecompany;
+package pl.gornik.insurancecompany.service;
 
-import pl.gornik.insurancecompany.users.User;
+import pl.gornik.insurancecompany.model.users.User;
 
 import java.util.HashMap;
 import java.util.Map;

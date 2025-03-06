@@ -1,7 +1,7 @@
-package pl.gornik.insurancecompany.policies;
+package pl.gornik.insurancecompany.model.policies;
 
-import pl.gornik.insurancecompany.Client;
-import pl.gornik.insurancecompany.enums.InsuranceType;
+import pl.gornik.insurancecompany.service.Client;
+import pl.gornik.insurancecompany.model.enums.InsuranceType;
 
 import java.time.LocalDate;
 

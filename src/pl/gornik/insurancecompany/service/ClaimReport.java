@@ -1,4 +1,4 @@
-package pl.gornik.insurancecompany;
+package pl.gornik.insurancecompany.service;
 
 import java.time.LocalDate;
 

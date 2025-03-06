@@ -1,6 +1,6 @@
-package pl.gornik.insurancecompany;
+package pl.gornik.insurancecompany.service;
 
-import pl.gornik.insurancecompany.enums.PaymentMethod;
+import pl.gornik.insurancecompany.model.enums.PaymentMethod;
 
 public class Payment {
     private double amount;
