@@ -1,6 +1,7 @@
 package pl.gornik.insurancecompany.tools;
 
 import pl.gornik.insurancecompany.model.enums.AutoInsuranceType;
+import pl.gornik.insurancecompany.model.enums.ClaimStatus;
 import pl.gornik.insurancecompany.model.enums.PaymentMethod;
 import pl.gornik.insurancecompany.model.enums.PropertyInsuranceType;
 import pl.gornik.insurancecompany.model.policies.AutoInsurancePolicy;
@@ -78,6 +79,9 @@ public class TestDataGenerator {
             }
 
             insuranceCompany.addClaimReport(new ClaimReport(insuranceCompany.getClients().get(i), "Zgłoszenie szkody nr " + i, LocalDate.of(2024, (i % 12) + 1, (i % 28) + 1), (i % 2 == 0 ? "A" : "P") + (10000 + i)));
+            if (i % 2 == 0) insuranceCompany.getClaimReports().get(i).setStatus(ClaimStatus.ACCEPTED);
+            else insuranceCompany.getClaimReports().get(i).setStatus(ClaimStatus.REJECTED);
+
             insuranceCompany.addPayment(new Payment(900 + (i * 55), paymentMethods[i % paymentMethods.length]));
             authService.registerUser(new ClientUser(insuranceCompany.getClients().get(i).getEmail(), "haslo" + i));
         }
