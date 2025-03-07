@@ -19,4 +19,16 @@ public class AuthenticationService {
         }
         return null;
     }
+
+    public Map<String, User> getUsers() {
+        return users;
+    }
+
+    public boolean removeUser(String email) {
+        if (users.containsKey(email)) {
+            users.remove(email);
+            return true;
+        }
+        return false;
+    }
 }
