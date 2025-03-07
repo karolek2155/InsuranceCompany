@@ -22,12 +22,14 @@ public class LifeInsurancePolicy extends Policy{
     @Override
     public String toString() {
         return "LifeInsurancePolicy{" +
-                "policyNumber='" + policyNumber + '\'' +
+                "insuredAmount=" + insuredAmount +
+                ", policyNumber='" + policyNumber + '\'' +
                 ", client=" + client +
                 ", premium=" + premium +
                 ", issueDate=" + issueDate +
                 ", insuranceType=" + insuranceType +
-                ", insuredAmount=" + insuredAmount +
+                ", status=" + status +
+                ", endDate=" + endDate +
                 '}';
     }
 }

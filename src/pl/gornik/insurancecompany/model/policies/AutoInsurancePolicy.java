@@ -27,12 +27,14 @@ public class AutoInsurancePolicy extends Policy{
     @Override
     public String toString() {
         return "AutoInsurancePolicy{" +
-                "policyNumber='" + policyNumber + '\'' +
+                "type=" + type +
+                ", policyNumber='" + policyNumber + '\'' +
                 ", client=" + client +
                 ", premium=" + premium +
                 ", issueDate=" + issueDate +
                 ", insuranceType=" + insuranceType +
-                ", type=" + type +
+                ", status=" + status +
+                ", endDate=" + endDate +
                 '}';
     }
 }

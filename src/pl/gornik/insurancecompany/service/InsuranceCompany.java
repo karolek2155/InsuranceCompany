@@ -12,6 +12,15 @@ public class InsuranceCompany {
     private List<ClaimReport> claimReports = new ArrayList<>();
     private List<Payment> payments = new ArrayList<>();
 
+    public ClaimReport getClaimByNumber(String claimNumber) {
+        for (ClaimReport claimReport : claimReports) {
+            if (claimReport.getClaimNumber().equals(claimNumber)) {
+                return claimReport;
+            }
+        }
+        return null;
+    }
+
     public void processPayment(Policy policy, double amount, PaymentMethod paymentMethod) {
         double premium = policy.getPremium();
         if (amount < premium) {

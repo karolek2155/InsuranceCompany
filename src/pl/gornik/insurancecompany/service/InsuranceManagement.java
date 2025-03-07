@@ -1,9 +1,6 @@
 package pl.gornik.insurancecompany.service;
 
-import pl.gornik.insurancecompany.model.enums.AutoInsuranceType;
-import pl.gornik.insurancecompany.model.enums.InsuranceType;
-import pl.gornik.insurancecompany.model.enums.PaymentMethod;
-import pl.gornik.insurancecompany.model.enums.PropertyInsuranceType;
+import pl.gornik.insurancecompany.model.enums.*;
 import pl.gornik.insurancecompany.model.policies.AutoInsurancePolicy;
 import pl.gornik.insurancecompany.model.policies.LifeInsurancePolicy;
 import pl.gornik.insurancecompany.model.policies.Policy;
@@ -299,34 +296,6 @@ public class InsuranceManagement {
         }
     }
 
-    public static void manageClaims(Scanner scanner, InsuranceCompany insuranceCompany) {
-        System.out.println("Składanie wniosku o ubezpieczenie...");
-
-        String pesel = Validation.getValidPesel(scanner);
-        Client client = insuranceCompany.findClientByPesel(pesel);
-
-        if (client == null) {
-            System.out.println("Nie znaleziono klienta o podanym numerze PESEL.");
-        } else {
-            System.out.print("Podaj opis szkody: ");
-            String description = scanner.nextLine().trim();
-
-            System.out.print("Podaj numer polisy: ");
-            String policyNumber = scanner.nextLine().trim();
-
-            Policy policy = insuranceCompany.getPolicyByNumber(policyNumber);
-            if (policy == null) {
-                System.out.println("Nie znaleziono polisy o podanym numerze.");
-            } else {
-                LocalDate reportDate = LocalDate.now();
-                ClaimReport claimReport = new ClaimReport(client, description, reportDate, policyNumber);
-
-                insuranceCompany.addClaimReport(claimReport);
-                System.out.println("Wniosek o ubezpieczenie został pomyślnie złożony.");
-            }
-        }
-    }
-
 
     public static void issuePolicy(Scanner scanner, InsuranceCompany insuranceCompany) {
         System.out.println("Wystawianie polisy...");
@@ -370,7 +339,7 @@ public class InsuranceManagement {
 
             if (newPolicy != null) {
                 insuranceCompany.addPolicy(newPolicy);
-                System.out.println("Polisa została pomyślnie wystawiona:");
+                System.out.println("Polisa została pomyślnie wystawiona o numerze " + newPolicy.getPolicyNumber() + ":");
                 System.out.println(newPolicy);
             } else {
                 System.out.println("Wystawienie polisy nie powiodło się.");
@@ -439,6 +408,7 @@ public class InsuranceManagement {
                     System.out.println("Nie posiadasz żadnych polis.");
                 } else {
                     for (Policy policy : userPolicies) {
+                        policy.updateStatus();
                         System.out.println(policy);
                     }
                 }
@@ -449,6 +419,7 @@ public class InsuranceManagement {
                 if (policy == null || !policy.getClient().getPesel().equals(client.getPesel())) {
                     System.out.println("Nie znaleziono Twojej polisy o podanym numerze.");
                 } else {
+                    policy.updateStatus();
                     System.out.println("\nZnaleziono Twoją polisę:");
                     System.out.println(policy);
                 }
@@ -456,10 +427,9 @@ public class InsuranceManagement {
         }
     }
 
-    public static void submitClaim(Scanner scanner, Client client, InsuranceCompany insuranceCompany) {
-        System.out.println("Zgłaszanie roszczenia...");
 
-        System.out.println("Składanie wniosku o ubezpieczenie...");
+    public static void submitClaim(Scanner scanner, Client client, InsuranceCompany insuranceCompany) {
+        System.out.println("Przetwarzanie roszczenia...");
 
         System.out.print("Podaj opis szkody: ");
         String description = scanner.nextLine().trim();
@@ -471,9 +441,40 @@ public class InsuranceManagement {
         } else {
             LocalDate reportDate = LocalDate.now();
             ClaimReport claimReport = new ClaimReport(client, description, reportDate, policyNumber);
-
+            claimReport.setStatus(ClaimStatus.UNDER_REVIEW);
             insuranceCompany.addClaimReport(claimReport);
-            System.out.println("Wniosek o ubezpieczenie został pomyślnie złożony.");
+            System.out.println("Wniosek o ubezpieczenie o numerze" + claimReport.getClaimNumber() + "został pomyślnie złożony i oczekuje na rozpatrzenie.");
         }
     }
+
+    public static void processClaim(Scanner scanner, InsuranceCompany insuranceCompany) {
+        System.out.print("Podaj numer roszczenia do rozpatrzenia: ");
+        String claimNumber = scanner.nextLine().trim();
+        ClaimReport claimReport = (ClaimReport) insuranceCompany.getClaimsByPolicy(claimNumber);
+        if (claimReport == null) {
+            System.out.println("Nie znaleziono roszczenia o podanym numerze.");
+        } else {
+            System.out.println("Szczegóły roszczenia:");
+            System.out.println("Opis: " + claimReport.getDescription());
+            System.out.println("Data zgłoszenia: " + claimReport.getReportDate());
+            System.out.println("Status: " + claimReport.getStatus());
+
+            if (claimReport.getStatus() == ClaimStatus.UNDER_REVIEW) {
+                System.out.print("Czy chcesz zaakceptować (A) czy odrzucić (R) to roszczenie? ");
+                String decision = scanner.nextLine().trim().toUpperCase();
+                if (decision.equals("A")) {
+                    claimReport.setStatus(ClaimStatus.ACCEPTED);
+                    System.out.println("Roszczenie zostało zaakceptowane.");
+                } else if (decision.equals("R")) {
+                    claimReport.setStatus(ClaimStatus.REJECTED);
+                    System.out.println("Roszczenie zostało odrzucone.");
+                } else {
+                    System.out.println("Nieprawidłowa decyzja. Roszczenie pozostaje w statusie 'W trakcie rozpatrywania'.");
+                }
+            } else {
+                System.out.println("To roszczenie zostało już rozpatrzone.");
+            }
+        }
+    }
+
 }

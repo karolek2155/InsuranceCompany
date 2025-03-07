@@ -61,7 +61,7 @@ public class Main {
                     case 2 -> { if (user instanceof AdminUser) InsuranceManagement.manageClients(scanner, insuranceCompany); }
                     case 3 -> { if (user instanceof AdminUser) InsuranceManagement.viewClaims(scanner, insuranceCompany); }
                     case 4 -> { if (user instanceof EmployeeUser) InsuranceManagement.managePolicies(scanner, insuranceCompany); }
-                    case 5 -> { if (user instanceof EmployeeUser) InsuranceManagement.manageClaims(scanner, insuranceCompany); }
+                    case 5 -> { if (user instanceof EmployeeUser) InsuranceManagement.processClaim(scanner, insuranceCompany); }
                     case 6 -> { if (user instanceof EmployeeUser) InsuranceManagement.issuePolicy(scanner, insuranceCompany); }
                     case 7 -> { if (user instanceof EmployeeUser) InsuranceManagement.processPayment(scanner, insuranceCompany); }
                     case 8 -> { if (user instanceof EmployeeUser) InsuranceManagement.calculatePremiums(scanner, insuranceCompany); }
