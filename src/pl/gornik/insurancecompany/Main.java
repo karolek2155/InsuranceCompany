@@ -17,7 +17,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         TestDataGenerator.initializeData(insuranceCompany, authService);
         Client client = null;
+        boolean running = true;
 
+        while (running) {
         System.out.print("Podaj email: ");
         String login = scanner.nextLine();
         System.out.print("Podaj hasło: ");
@@ -78,6 +80,14 @@ public class Main {
             System.out.println("Niepoprawne dane logowania");
         }
 
+            System.out.println("Czy chcesz zalogować się ponownie? (T/N)");
+            String response = scanner.nextLine().trim().toLowerCase();
+            if (!response.equalsIgnoreCase("T")) {
+                running = false;
+            }
+        }
+
+        System.out.println("Zakończono działanie systemu.");
         scanner.close();
     }
 }

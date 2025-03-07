@@ -18,7 +18,6 @@ import java.util.Scanner;
 
 public class InsuranceManagement {
     public static void manageUsers(Scanner scanner, AuthenticationService authService) {
-        while (true) {
             System.out.println("Zarządzanie użytkownikami...");
             System.out.println("1. Wyświetl wszystkich użytkowników");
             System.out.println("2. Dodaj użytkownika");
@@ -74,7 +73,6 @@ public class InsuranceManagement {
                 }
                 default -> System.out.println("Niepoprawny wybór.");
             }
-        }
     }
 
     public static void manageClients(Scanner scanner, InsuranceCompany insuranceCompany) {

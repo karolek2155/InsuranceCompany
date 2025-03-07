@@ -6,9 +6,10 @@ InsuranceCompany to projekt napisany w języku Java, mający na celu symulacje o
 
 - [Opis projektu](#opis-projektu)
 - [Funkcjonalnosci](#funkcjonalnosci)
+- [Struktura projektu](#struktura-projektu)
 - [Wymagania](#wymagania)
 - [Instalacja i uruchomienie](#instalacja-i-uruchomienie)
-- [Struktura projektu](#struktura-projektu)
+- [Testowanie](#testowanie)
 - [Autor](#autor)
 
 ## Opis projektu
@@ -82,36 +83,9 @@ Projekt ma charakter demonstracyjny i edukacyjny. Jego glownym celem jest przeds
 2. **Historia płatności** 
     - Zapisywanie informacji o dacie, kwocie, metodzie płatności, numerze polisy.
 
-## Wymagania
-
-### Projekt zostal utworzony przy uzyciu:
-- **Java:** Wersja 22 SDK.
-- **IDE:** IntelliJ IDEA 2024.1.1 (Community Edition).
-
-## Instalacja i uruchomienie
-
-1. **Klonowanie repozytorium:**
-
-   ```bash
-   git clone https://github.com/karolek2155/InsuranceCompany.git
-   ```
-2. **Import projektu do IntelliJ IDEA:**
-
-- Otworz IntelliJ IDEA.
-- Wybierz opcje File > Open... i wskaz folder z pobranym projektem.
-- Poczekaj na indeksowanie oraz konfiguracje projektu. 
-
-2. **Uruchomienie:**
-
-- Skorzystaj z przycisku Run w IntelliJ IDEA.
-
 ## Struktura projektu
 
-### Struktura katalogów:
-
-# InsuranceCompany
-
-## Struktura katalogów
+### Struktura katalogów
 
 ```bash
     InsuranceCompany/
@@ -161,6 +135,78 @@ Projekt ma charakter demonstracyjny i edukacyjny. Jego glownym celem jest przeds
 - service – logika biznesowa (np. obsługa roszczeń, zarządzanie ubezpieczeniami, uwierzytelnianie).
 - users – klasy reprezentujące różne typy użytkowników (administrator, klient, pracownik).
 - tools – narzędzia pomocnicze, np. do generowania danych testowych czy walidacji.
+- Main.java – klasa testowa uruchamiająca aplikację.
+
+## Wymagania
+
+### Projekt zostal utworzony przy uzyciu:
+- **Java:** Wersja 22 SDK.
+- **IDE:** IntelliJ IDEA 2024.1.1 (Community Edition).
+
+## Instalacja i uruchomienie
+
+1. **Klonowanie repozytorium:**
+
+   ```bash
+   git clone https://github.com/karolek2155/InsuranceCompany.git
+   ```
+2. **Import projektu do IntelliJ IDEA:**
+
+- Otworz IntelliJ IDEA.
+- Wybierz opcje File > Open... i wskaz folder z pobranym projektem.
+- Poczekaj na indeksowanie oraz konfiguracje projektu. 
+
+2. **Uruchomienie:**
+
+- Skorzystaj z przycisku Run w IntelliJ IDEA.
+
+## Testowanie
+
+Aplikacja zawiera wbudowany system testowych danych generowanych przez TestDataGenerator. Przy pierwszym uruchomieniu zostaną dodani przykładowi użytkownicy oraz klienci, co pozwala na szybkie testowanie funkcjonalności systemu.
+
+### Logowanie do systemu
+
+Po uruchomieniu aplikacji zostaniesz poproszony o podanie danych logowania. Możesz skorzystać z następujących przykładowych kont testowych:
+
+- Administrator 
+  - Email: `admin@gmail.com`
+  - Hasło: `admin789`
+
+- Pracownik 
+  - Email: `janek.kowalski@wp.pl` 
+  - Hasło: `emp456`
+
+- Klient 
+  - Email: `jan.kowalski@gmail.com`
+  - Hasło: `pass123`
+
+### Funkcjonalności systemu
+
+Po pomyślnym zalogowaniu się możesz korzystać z dostępnych opcji systemu, które zależą od roli użytkownika:
+
+**Administrator:**
+
+- Zarządzanie użytkownikami 
+- Zarządzanie klientami 
+- Przeglądanie zgłoszeń roszczeń
+- Plus opcje pracownika
+
+**Pracownik:**
+
+- Wyszukiwanie polis 
+- Obsługa roszczeń 
+- Wystawianie polis 
+- Dokonywanie płatności 
+- Obliczanie składek
+
+**Klient:**
+
+- Podgląd swoich polis 
+- Składanie wniosków o roszczenie
+
+### Wylogowanie
+
+Aby wylogować się z systemu, wybierz opcję 0 - Wyloguj. System zakończy sesję i powróci do ekranu logowania.
 
 ## Autor
 Projekt wykonał Karol Paź.
