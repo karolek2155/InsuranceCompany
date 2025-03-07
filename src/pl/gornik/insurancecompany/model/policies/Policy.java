@@ -35,6 +35,9 @@ public abstract class Policy {
     }
 
 
+    public PolicyStatus getStatus() {
+        return status;
+    }
 
     public void updateStatus() {
         LocalDate today = LocalDate.now();

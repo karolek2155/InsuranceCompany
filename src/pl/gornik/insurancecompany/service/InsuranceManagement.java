@@ -215,8 +215,17 @@ public class InsuranceManagement {
                 if (allReports.isEmpty()) {
                     System.out.println("Brak zgłoszonych roszczeń.");
                 } else {
+                    System.out.println("Raporty w trakcie przeglądu");
                     for (ClaimReport report : allReports) {
-                        System.out.println(report);
+                        if (report.getStatus() == ClaimStatus.UNDER_REVIEW)System.out.println(report);
+                    }
+                    System.out.println("Zaakceptowane raporty");
+                    for (ClaimReport report : allReports) {
+                        if (report.getStatus() == ClaimStatus.ACCEPTED)System.out.println(report);
+                    }
+                    System.out.println("Odrzucone raporty");
+                    for (ClaimReport report : allReports) {
+                        if (report.getStatus() == ClaimStatus.REJECTED)System.out.println(report);
                     }
                 }
             }
@@ -264,8 +273,17 @@ public class InsuranceManagement {
                 if (allPolicies.isEmpty()) {
                     System.out.println("Brak dostępnych polis.");
                 } else {
+                    System.out.println("Aktywne polisy");
                     for (Policy policy : allPolicies) {
-                        System.out.println(policy);
+                        if (policy.getStatus() == PolicyStatus.ACTIVE) System.out.println(policy);
+                    }
+                    System.out.println("Wygasłe polisy");
+                    for (Policy policy : allPolicies) {
+                        if (policy.getStatus() == PolicyStatus.EXPIRED) System.out.println(policy);
+                    }
+                    System.out.println("Anulowane polisy");
+                    for (Policy policy : allPolicies) {
+                        if (policy.getStatus() == PolicyStatus.CANCELLED) System.out.println(policy);
                     }
                 }
             }

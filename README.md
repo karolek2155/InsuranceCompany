@@ -26,7 +26,7 @@ Projekt ma charakter demonstracyjny i edukacyjny. Jego glownym celem jest przeds
 - [Zarządzanie użytkownikami](#zarządzanie-użytkownikami)
 - [Zarządzanie klientami](#zarządzanie-klientami)
 - [Zarządzanie polisami](#zarządzanie-polisami)
-- [Obsługa roszczeń (Claims)](#obsługa-roszczeń-claims)
+- [Obsługa roszczeń](#obsługa-roszczeń)
 - [Obsługa płatności](#obsługa-płatności)
 
 ### Zarządzanie użytkownikami
